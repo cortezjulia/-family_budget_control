@@ -1,294 +1,225 @@
 #PROJETO DE TABELA PARA CONTROLE DE ORÇAMENTO FAMILIAR
-#OBJETIVO É EXERCITAR AS TÉCNICAS DE CONSTRUÇÃO DE FUNÇOES E TRABALHO COM LISTAS
+
 import os
+import unicodedata
+import sys
 
-j=0
-op_int=0
-valores=[]
-meses=[]
-itens=[]
-lista_posicoes=[]
-valores_oficiais_habi=['','','','','','','','','','']
-valores_oficiais_renda=['','','','','','']
-valores_oficiais_saude=['','','','','']
-valores_oficiais_impo=['','']
-valores_oficiais_auto=['','','','','','','']
-valores_oficiais_desppes=['','','','','','','','']
-valores_oficiais_depe=['','','','','','','','']
-valores_oficiais_lazer=['','','','','','','']
-valores_oficiais_inv=['','','']
 
-#LISTA DE ITENS FIXOS DE GASTOS
-meses_oficiais=['JAN','FEV','MAR','ABR','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
-renda=['Salários','13º Salário','Férias','Renda extra','Alugueis','Juros de Investimento']
-habitacao=['Prestação de compra','Aluguel','Água','IPTU','Luz','Telefone','TV por assinatura','Supermercado','Empregada','Reformas']
-saude=['Plano de saúde','Médico','Dentista','Medicamentos','Seguro de vida']
-imposto=['IRFF','INSS']
-auto=['Prestação','Seguro','Combustível','Lavagens','IPVA','Mecânico','Multas']
-desp_pessoais=['Higiene pessoal','Cosméticos','Cabelereiro','Vestuário','Lavanderia','Academia','Unhas','Cursos']
-depententes=['Escola/Faculdade','Cursos Extras','Material escolar','Esportes/Uniformes','Mesada','Passeios/Férias','Vestuário','Saúde']
-lazer=['Restaurantes','Restaurantes','Livraria','Streamings','Passagens','Hotéis','Passeios']
-investimentos=['Previdência','Investimentos carro','Aplicações']
 
-renda_printar=[]
+official_month=['JAN','FEV','MAR','ABR','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 
-#FUNÇÃO PARA GERAR MENU PRINCIPAL E RECEBER ESCOLHA DO USUARIO 
-def menu_ini():
-    global op_int
-    print('*******Planilha de Controle de Orçamento Familiar******')
+list_income=[0,0,0,0,0,0,0,0]
+list_month_income=['-','-','-','-','-','-','-','-']
+
+list_housing=[0,0,0,0,0,0,0,0,0,0]
+list_month_housing=['-','-','-','-','-','-','-','-','-','-']
+
+list_health=[0,0,0,0,0,0,0,0]
+list_month_health=['-','-','-','-','-','-','-','-']
+
+list_tax=[0,0,0,0,0,0,0,0]
+list_month_tax=['-','-','-','-','-','-','-','-']
+
+list_car=[0,0,0,0,0,0,0,0]
+list_month_car=['-','-','-','-','-','-','-','-']
+
+list_personal=[0,0,0,0,0,0,0,0]
+list_month_personal=['-','-','-','-','-','-','-','-']
+
+list_dependent=[0,0,0,0,0,0,0,0]
+list_month_dependent=['-','-','-','-','-','-','-','-']
+
+list_leisure=[0,0,0,0,0,0]
+list_month_leisure=['-','-','-','-','-','-']
+
+list_investment=[0,0,0]
+list_month_investment=['-','-','-']
+
+
+
+
+
+gastos = {
+    'Renda': ['Salários','13º Salário','Férias','Renda extra','Alugueis','Juros de Investimento'],
+    'Habitação': ['Prestação de compra','Aluguel','Água','IPTU','Luz','Telefone','TV por assinatura','Supermercado','Empregada','Reformas'],
+    'Saúde': ['Plano de saúde','Médico','Dentista','Medicamentos','Seguro de vida'],
+    'Imposto':['IRFF','INSS'],
+    'Auto':['Prestação','Seguro','Combustível','Lavagens','IPVA','Mecânico','Multas'],
+    'Pessoal':['Higiene pessoal','Cosméticos','Cabelereiro','Vestuário','Lavanderia','Academia','Unhas','Cursos'],
+    'Depententes':['Escola/Faculdade','Cursos Extras','Material escolar','Esportes/Uniformes','Mesada','Passeios/Férias','Vestuário','Saúde'],
+    'Lazer':['Restaurantes','Livraria','Streamings','Passagens','Hotéis','Passeios'],
+    'Investimentos':['Previdência','Aplicações']
+
+}
+def month_comparation(month_comparation):
+
+    flag3=False
+    month_comparation=str_accentuation_check(month_comparation)
+    month_comparation=month_comparation.lower()
     
-    print("                          ",*meses_oficiais, sep = "  ")
+    for m in official_month:
+       
+        original_m=m
+        m=m.lower()
+        if m==month_comparation:
+            flag3=True
+            break
     
-    print('',sep='\n')
-    print('RENDA FAMILIAR --> DIGITE 1')
-    print('',sep='\n')
-    print(*renda,sep = "\n")
-    print('',sep='\n')
-    print('HABITAÇÃO --> DIGITE 2')
-    print('',sep='\n')
-    print(*habitacao, sep = "\n")
-    print('',sep='\n')
-    print('SAÚDE --> DIGITE 3')
-    print('',sep='\n')
-    print(*saude, sep = "\n")
-    print('',sep='\n')
-    print('IMPOSTOS --> DIGITE 4')
-    print('',sep='\n')
-    print(*imposto, sep = "\n")
-    print('',sep='\n')
-    print('AUTOMÓVEL --> DIGITE 5')
-    print('',sep='\n')
-    print(*auto, sep = "\n")
-    print('',sep='\n')
-    print('DESPESAS PESSOAIS --> DIGITE 6')
-    print('',sep='\n')
-    print(*desp_pessoais, sep = "\n")
-    print('',sep='\n')
-    print('DEPENDENTES --> DIGITE 7')
-    print('',sep='\n')
-    print(*depententes, sep = "\n")
-    print('',sep='\n')
-    print('LAZER --> DIGITE 8')
-    print('',sep='\n')
-    print(*lazer, sep = "\n")
-    print('',sep='\n')
-    print('INVESTIMENTOS --> DIGITE 9')
-    print('',sep='\n')
-    print(*investimentos, sep = "\n")
-    while True:
-        op=input('Insira o número correspondente ao tipo de gasto que quer inserir: ')
-        #VERIFICA SE HÁ APENAS NUMEROS
-        if op.isdigit()==False:
-            continue
-        #VERIFICA SE VALOR ESTÁ NA FAIXA PERMITIDA
-        else:
-            if int(op)<1 or int(op)>9:
-                continue
-            else:
-                op_int=int(op)
-                break
+    if flag3==False:
+        original_m='nulo'
+
+        
+    return original_m
+
+
+
+
+
     
-    #RECEBE OS VALORES DE MES, ITEM E VALOR QUE O USUARIO QUER ADICIONAR A TABELA
-def recebe_valores(item,valor,mes):
+
+def parameters_receive(expense_groupe,expense,value,month):
    
-    valores.append(valor)
-    meses.append(mes)
-    itens.append(item)
+
+    expense=str(expense)
+    expense_groupe=str(expense_groupe)
+
+    
+    
+    final_expense,final_groupe=expenses_comparation(expense,expense_groupe)
+    final_month=month_comparation(month)
+    
+
+    if (final_groupe or final_expense)=='nulo':
+        print('***O GASTO INSERIDO NÃO CORRESPONDE A NENHUM GASTO CADASTRADO***')
+        return 
+    if (final_month)=='nulo':
+        print('***O MÊS INSERIDO NÃO CORRESPONDE A NENHUM MÊS CADASTRADO***')
+        return 
 
 
 
+    test_list,test_list_month=choose_list(final_groupe)
 
-def salva_valores():
-    global j
-    global op_int
-    #renda
-    if op_int==1:
-        i=0
-        while i<len(renda):
-                
-            if renda[i]==itens[j]:
-                valores_oficiais_renda.insert(i,valores[j])
-            
-            i+=1
-        return 1
-    #habitação
-    #i=0
-    #while i<len(habitacao):
-        #   if habitacao[i]==itens[j]:
-        #      valores_oficiais_habi.insert(i,valores[i])
-            
-        #  i+=1
-    #saude
-    elif op_int==2:
-        i=0
-        while i<len(saude):
-            
-            if saude[i]==itens[j]:
-                valores_oficiais_saude.insert(i,valores[j])
-                
-            i+=1
-        return 2
-
-    #imposto
-    elif op_int==3:
-        i=0
-        while i<len(imposto):
-           
-            if imposto[i]==itens[j]:
-                valores_oficiais_impo.insert(i,valores[j])  
-            
-            i+=1
-        return 3
-    #auto
-    elif op_int==4:
-        i=0
-        while i<len(auto):
-            
-            if auto[i]==itens[j]:
-                valores_oficiais_auto.insert(i,valores[j])
-            
-            i+=1
-        return 4
-
-    #desp_pessoais
-    elif op_int==5:
-        i=0
-        while i<len(desp_pessoais):
-                
-            if desp_pessoais[i]==itens[j]:
-                valores_oficiais_desppes.insert(i,valores[j]) 
-                
-            i+=1
-        return 5
-            
-    #dependentes
-    elif op_int==6:
-        i=0
-        while i<len(depententes):
-                
-            if depententes[i]==itens[j]:
-                valores_oficiais_depe.insert(i,valores[j]) 
-            
-            i+=1
-        return 6
-
-    #lazer
-    elif op_int==7:
-        i=0
-        while i<len(lazer):
-            
-            if lazer[i]==itens[j]:
-                valores_oficiais_lazer.insert(i,valores[j]) 
-            
-            i+=1
-        return 7
-    #investimentos
-    elif op_int==8:
-        i=0
-        while i<len(investimentos):
-                
-            if investimentos[i]==itens[j]:
-                valores_oficiais_inv.insert(i,valores[j])
-                
-            i+=1
-        return 8
-    j+=1
- 
-
-def impressao(op_escolhida):
-        os.system('cls')
-        global posicao
-        global posicao_ref
-        global m
+    for index,var in enumerate(gastos[final_groupe]):
         
-        print('*******Planilha de Controle de Orçamento Familiar******')
+       
+        if var== final_expense:
+
+            stored_value=test_list[index]
+            test_list.insert(index,(value+stored_value))
+            test_list.pop(index+1)
+            test_list_month.insert(index,final_month)
+            test_list_month.pop(index+1)
+       
         
-        print("                          ",*meses_oficiais, sep = "  ")
-
-        if op_escolhida==1:
-            lista_item=renda
-            lista_valor=valores_oficiais_renda
-        if op_escolhida==2: 
-            lista_item=saude 
-            lista_valor=valores_oficiais_saude 
-        if op_escolhida==3:
-            lista_item=imposto
-            lista_valor=valores_oficiais_impo
-        if op_escolhida==4:
-            lista_item=auto 
-            lista_valor=valores_oficiais_auto
-        if op_escolhida==5: 
-            lista_item=desp_pessoais
-            lista_valor=valores_oficiais_desppes   
-        if op_escolhida==6:
-            lista_item=depententes 
-            lista_valor=valores_oficiais_depe 
-        if op_escolhida==7: 
-            lista_item=lazer 
-            lista_valor=valores_oficiais_lazer
-        if op_escolhida==8:
-            lista_item=investimentos
-            lista_valor=valores_oficiais_inv   
-         
-
-        m=0
-        posicao_ref=22
-        while m<len(lista_item):
-            i=0
-
-            if len(meses)>m:
-           
-                while i<len(meses_oficiais):
-                    
-                    if meses_oficiais[i]==meses[m]:
-                        achou_mes=i
-                        break
-                    i+=1
-            
-                if achou_mes==0:
-                    
-                    posicao=posicao_ref
-                else:
-                    posicao=posicao_ref+(achou_mes*5)
-
-                posicao_palavra=len(lista_item[m])
-                posicao=posicao-posicao_palavra
-                
-                posicao_final=lista_item[m]+(posicao*' ')
-                lista_posicoes.append(posicao_final)
-            
-            else:
-                posicao_final=lista_item[m]+(posicao_ref*' ')
-                lista_posicoes.append(posicao_final)
-           
-            m+=1
-        i=0
-        while i<len(lista_posicoes):
-            print(lista_posicoes[i],lista_valor[i],end='\n')
-            i+=1
-
-        
-
-                        
-        
-        
-                   
+    print(*test_list)
+    print(*test_list_month)
+   
 
 
-              
+
+def menu():
+    ind=0
+    for key, value in gastos.items():
+        print(f'----------{key}----------')
+        print('\n')
+        print(*value,sep='\n')
+        print('\n')
+
+    user_groupe=input('Insira o gasto geral: ')
+    user_name=input('Insira o gasto específico: ')
+    user_value=(input('Insira o valor: '))
+    user_month=input('Insira o mês: ')
+
+    try:
+        user_value=float(user_value)
+    except:
+        print('***INSIRA APENAS NÚMEROS PARA O VALOR***')
+        user_value='error'
+
+    return user_groupe,user_name,user_value,user_month
+
+def choose_list(choose_groupe):
+
+    match choose_groupe:
+        case 'Renda':
+            return list_income,list_month_income
+        case 'Habitação':
+            return list_housing,list_month_housing
+        case 'Saúde':
+            return list_health,list_month_health
+        case  'Imposto':
+            return list_tax,list_month_tax
+        case  'Auto':
+            return list_car,list_month_car
+        case 'Pessoal':
+            return list_personal,list_month_personal
+        case 'Depententes':
+            return list_dependent,list_month_dependent
+        case 'Lazer':
+            return list_leisure,list_month_leisure
+        case 'Investimentos':
+            return list_investment,list_month_investment
+
+def str_accentuation_check(conv_str):
+    str_converter = unicodedata.normalize("NFD", conv_str)
+    str_converter = str_converter.encode("ascii", "ignore")
+    str_converter = str_converter.decode("utf-8")
+    str_converter=str_converter.lower()
+
+    return str_converter
+    
+def expenses_comparation(expense_comparation,expense_groupe_comparation):
+    flag1=False
+    flag2=False
+
+    expense_comparation=str_accentuation_check(expense_comparation)
+    expense_groupe_comparation=str_accentuation_check(expense_groupe_comparation)
+    expense_comparation=expense_comparation.lower()
+    expense_groupe_comparation=expense_groupe_comparation.lower()
+
+    
+    for key,item in gastos.items():
+       
+       original_groupe=key
+       key=str_accentuation_check(key)
+       key=key.lower()
+
+       if key==expense_groupe_comparation:
+           flag1=True
+           break
+
+    for item in gastos[original_groupe]:
+        original_expense=item
+        item=str_accentuation_check(item)
+        item=item.lower()
+
+        if item==expense_comparation:
+            flag2=True
+            break
+    
+   
+
+    if (flag1 and flag2)==False:
+        original_expense='nulo'
+        original_groupe='nulo'
+    
+   
+    return original_expense,original_groupe
+    
+    
+
+
+
+    
+
+
+
 while True:
     
-    menu_ini()
-    mes_usuario=input('Insira o mês: ')
-    item_usuario=input('Insira o item: ')
-    valor_usuario=input('Insira o valor: ')
-    recebe_valores(item_usuario,valor_usuario,mes_usuario)
-    recebe_item=salva_valores()
-    impressao(recebe_item)
-    
+    return_groupe,return_name,return_value,return_month=menu()
+    if return_value=='error':
+        continue
 
-       
-
-
-
-
+    parameters_receive(return_groupe,return_name,return_value,return_month)
+    #os.system('cls') 
