@@ -8,7 +8,7 @@ import matplotlib.pyplot
 import sys
 total_income=0
 official_month=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
-income_list=[]
+income_sum_list=[]
 spending_sum_list=[]
 balance_month_list=[]
 
@@ -249,10 +249,10 @@ def extra_calculations(receive_flag_income_sum,receive_income_sum,receive_spendi
       #  elif size_income_list==0:
        #    income_list.insert(receive_increment_month,receive_income_sum) 
 
-    income_list.append(receive_income_sum)
+    income_sum_list.append(receive_income_sum)
     try:
-            if type(income_list[12]) is float or int:
-                del income_list[12]
+            if type(income_sum_list[12]) is float or int:
+                del income_sum_list[12]
     except:
             print()
 
@@ -271,8 +271,8 @@ def extra_calculations(receive_flag_income_sum,receive_income_sum,receive_spendi
         
         for i,j in enumerate(official_month):
             try:
-                print(f'{j} - {income_list[i]}')
-                total_income=income_list[i]+total_income
+                print(f'{j} - {income_sum_list[i]}')
+                total_income=income_sum_list[i]+total_income
             except:
                 print()
 
@@ -305,7 +305,7 @@ def extra_calculations(receive_flag_income_sum,receive_income_sum,receive_spendi
         
         for o,p in enumerate(official_month):
         
-                balance_month=income_list[o]-spending_sum_list[o]
+                balance_month=income_sum_list[o]-spending_sum_list[o]
                 if balance_month<0:
                     print(red(f'{p} - {balance_month}'))
                 elif balance_month>0:
@@ -345,6 +345,7 @@ def graphics_and_complete_lists():
             print('Ver Gráficos com os dados gerados: [1]')
             print('Ver a lista completa dos dados inseridos: [2]')
             print('Sair: [3]')
+            print('Reiniciar: [4]')
             option_final=input('Insira o número correspondente: ')    
 
             if option_final == '1':
@@ -357,11 +358,25 @@ def graphics_and_complete_lists():
                 return 0
             elif option_final=='3':
                 sys.exit()
+            elif option_final=='4':
+                return 2
             else:
                 print('Insira uma opção válida!') 
 
-     
-                
+def reset_function():
+    income_sum_list.clear()
+    spending_sum_list.clear()  
+    balance_month_list.clear() 
+
+    for clear_list in expenses_months.values():
+       clear_list.clear()
+
+    for clear_list in values_months.values():
+       clear_list.clear()
+ 
+    print(values_months)
+    print(expenses_months)
+
                 
           
 
@@ -462,6 +477,14 @@ while True:
 
     while True:
         print_or_not=graphics_and_complete_lists() 
+
+        if print_or_not==2:
+            print('Vamos resetar todos os dados armazenados...')
+            
+            reset_function()
+            time.sleep(5)
+            break
+
 
         for mo in official_month:
             if mo=='JAN':
