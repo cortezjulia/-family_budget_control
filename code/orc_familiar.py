@@ -4,8 +4,10 @@ import os
 import unicodedata
 from simple_colors import *
 import time
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import sys
+import numpy as np
+
 total_income=0
 official_month=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ']
 income_sum_list=[]
@@ -16,7 +18,7 @@ gastos = {
     'Renda': ['Salários','13º Salário','Férias','Renda extra','Alugueis','Juros de Investimento'],
     'Habitação': ['Prestação de compra','Aluguel','Água','IPTU','Luz','Telefone','TV por assinatura','Supermercado','Empregada','Reformas'],
     'Saúde': ['Plano de saúde','Médico','Dentista','Medicamentos','Seguro de vida'],
-    'Imposto':['IRFF','INSS'],
+    'Impostos':['IRFF','INSS'],
     'Auto':['Prestação','Seguro','Combustível','Lavagens','IPVA','Mecânico','Multas'],
     'Pessoal':['Higiene pessoal','Cosméticos','Cabelereiro','Vestuário','Lavanderia','Academia','Unhas','Cursos'],
     'Dependentes':['Escola/Faculdade','Cursos Extras','Material escolar','Esportes/Uniformes','Mesada','Passeios/Férias','Vestuário','Saúde'],
@@ -207,6 +209,12 @@ def result_prints(choose_month,pr_or_not):
                         flag_income_sum=1
                     else:
                         spending_sum=spending_sum+sum_values
+
+                        match gr:
+                            case gr=='Habitação':
+                                
+
+
                         
                        
                         
@@ -349,10 +357,41 @@ def graphics_and_complete_lists():
             option_final=input('Insira o número correspondente: ')    
 
             if option_final == '1':
-                print('Vamos ver os gráficos obtidos...')      
-                matplotlib.pyplot.plot(official_month, balance_month_list)   
-                matplotlib.pyplot.show()  
-                continue
+                os.system('cls')   
+                while True:
+                    print('Gráficos disponíveis:')
+                    print('Rendimentos e Despesas Anuais [1] ----------- Distribuição por categorias [2]')
+                    op_graph=input('Digite o número correspondente ao gráfico que deseja ver: ')
+                    if op_graph == '1':
+                        print('Rendimentos e Despesas Anuais')
+                        print('\n')
+                        plt.plot(official_month, income_sum_list, label = "Rendimentos")
+                        plt.plot(official_month, spending_sum_list, label = "Gastos")
+                        plt.plot(official_month, balance_month_list, label = "Saldo do Mês")
+                        
+                        plt.legend()
+                        plt.show() 
+                        break 
+
+                      
+
+                    elif op_graph == '2':
+                        print('Distribuição por categorias')
+                        print('\n')
+                        cars = ['Renda', 'Habitação', 'Saúde', 'Impostos', 'Auto', 'Pessoal','Dependentes','Lazer','Investimentos'] 
+  
+                        data = [23, 17, 35, 29, 12, 41] 
+                        fig = plt.figure(figsize =(10, 7)) 
+                        plt.pie(data, labels = cars) 
+                        plt.show() 
+                        
+                        break
+                    else:
+                        print('Digite uma opção válida!')
+                        time.sleep(3)
+
+                
+               
             elif option_final == '2':
                 print('Vamos ver a lista de todos os dados inseridos...') 
                 return 0
@@ -364,6 +403,8 @@ def graphics_and_complete_lists():
                 print('Insira uma opção válida!') 
 
 def reset_function():
+    os.system('cls')
+    print(green('Vamos resetar todos os dados armazenados...','bold'))
     income_sum_list.clear()
     spending_sum_list.clear()  
     balance_month_list.clear() 
@@ -373,9 +414,9 @@ def reset_function():
 
     for clear_list in values_months.values():
        clear_list.clear()
- 
-    print(values_months)
-    print(expenses_months)
+
+    time.sleep(5)
+    print(green('Vamos reiniciar...','bold'))
 
                 
           
@@ -479,10 +520,8 @@ while True:
         print_or_not=graphics_and_complete_lists() 
 
         if print_or_not==2:
-            print('Vamos resetar todos os dados armazenados...')
-            
             reset_function()
-            time.sleep(5)
+            
             break
 
 
